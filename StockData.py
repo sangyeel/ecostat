@@ -6,9 +6,11 @@ class NaverStockData:
     __URL = 'https://finance.naver.com/item/sise_day.nhn?code='
     # self.stockCode
     # self.lastPageNum
-    # self.totalStock
+    # self.totalStockList
     def __init__(self,stockCode):
         self.stockCode = stockCode
+        self.lastPageNum = 0
+        self.totalStockList = []
         self.get_last_page_number()
         self.get_stock_data()
    
@@ -32,9 +34,9 @@ class NaverStockData:
             res = requests.get(NaverStockData.__URL + self.stockCode + '&page=' + str(i))
             bs4Obj = bs4.BeautifulSoup(res.text,'html.parser')
             stockObj = bs4Obj.find_all('span',class_='tah p11')
-            self.totalStock = self.totalStock + stockObj
+            self.totalStockList.append(stockObj)
 
-        print self.totalStock
+        print self.totalStockList
  
      
 
