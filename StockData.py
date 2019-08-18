@@ -3,19 +3,28 @@ import bs4
 import re
 import os
 import pandas
-#https://finance.naver.com/item/sise_day.nhn?code=215600
+
+'''
+datafame from naver has 2 table
+1 is data table
+2 is pagenation table
+So we parsed the 0 table, means data
+'''
 class NaverStockData:
     __URL = 'https://finance.naver.com/item/sise_day.nhn?code='
     __SAVEDIR = "SavedStock"
-    # self.stockCode
-    # self.lastPageNum
-    # self.totalStockList
+
     def __init__(self,stockCode):
         self.stockCode = stockCode
         self.lastPageNum = 0
         self.totalStockList = []
-        self.get_last_page_number()
-        self.get_stock_data_with_data_frame()
+        targetFileName = os.path.join(NaverStockData.__SAVEDIR,self.stockCode + '.csv')
+        print(targetFileName)
+        if not (os.path.exists(targetFileName)):
+            self.get_last_page_number()
+            self.get_stock_data_with_data_frame()
+        else:
+            print('Already exist')
 
     def get_last_page_number(self):
         # request first html for getting end page
@@ -36,7 +45,6 @@ class NaverStockData:
         if not(os.path.isdir(NaverStockData.__SAVEDIR)):
                 os.makedirs(os.path.join(NaverStockData.__SAVEDIR))
 
-
     def get_stock_data(self):
         for i in range(1,self.lastPageNum):
             res = requests.get(NaverStockData.__URL + self.stockCode + '&page=' + str(i))
@@ -44,22 +52,14 @@ class NaverStockData:
             stockObj = bs4Obj.find_all('span',class_='tah p11')
             self.totalStockList.append(stockObj)
 
-
     def get_stock_data_with_data_frame(self):
         self.make_dir_for_save_csv()
         #for i in range(1,self.lastPageNum):
-        for i in range(1,2):
+        for i in range(1,self.lastPageNum):
             tempDataFrameList = pandas.read_html(NaverStockData.__URL + self.stockCode + '&page=' + str(i))
             tempDataFrame = tempDataFrameList[0]
-            tempDataFrame.to_csv(NaverStockData.__SAVEDIR+'\\'+self.stockCode+'.csv',mode='a')
-
-'''
-datafame from naver has 2 table
-1 is data table
-2 is pagenation table
-So we parsed the 0 table, means data
-'''
-
+            tempDataFrame = tempDataFrame.dropna() #drop 'na' data
+            tempDataFrame.to_csv(NaverStockData.__SAVEDIR+'\\' + self.stockCode+'.csv',mode='a')
 
 
 
