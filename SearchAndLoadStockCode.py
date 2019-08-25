@@ -22,9 +22,10 @@ Microsoft Office Excel 추가 기능     .xlam         Office Excel 2007 추가 
 class StockCodeSearch:
     __SAVEDIR = 'SavedStock'
     def __init__(self):
-        #self.df = pandas.read_excel(os.path.join(StockCodeSearch.__SAVEDIR,"total.xls"),sheet_name="total")
+        self.df = pandas.read_excel(os.path.join(StockCodeSearch.__SAVEDIR,"total.xlsx"),sheet_name="total")
 
-        self.df = pandas.read_html(os.path.join(StockCodeSearch.__SAVEDIR,"total.xls"))
+        #self.df = pandas.read_html(os.path.join(StockCodeSearch.__SAVEDIR,"total.xls"))
+        #self.df = pandas.read_table(os.path.join(StockCodeSearch.__SAVEDIR,"total.xls"))
         #print(self.df)
         print(type(self.df))
         print(self.df[0])
